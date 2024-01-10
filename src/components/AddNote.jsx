@@ -25,6 +25,10 @@ import { addNotesToStore } from "../redux/addNoteSlice";
 import { formattedDate, formattedDay, formattedTime } from "../utils/formatter";
 import PropTypes from "prop-types";
 
+// Quill | doc editing library
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -44,6 +48,9 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
   const [textArea, setTextArea] = useState(currentNote?.body || "");
   const [color, setColor] = useState(currentNote?.color || "#f5f5f4");
   const dispatch = useDispatch();
+
+  // *quill
+  const [value, setValue] = useState(currentNote?.body || "");
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(true);
@@ -68,6 +75,7 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
       setColor("#f5f5f4");
       setTextInput("");
       setTextArea("");
+      setValue("");
     }, 1000);
     setOpen(false);
     if (currentNote) {
@@ -77,7 +85,8 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
 
   const handleUpload = async () => {
     handleCancelButton();
-    if (!textInput && !textArea) return;
+    // if (!textInput && !textArea) return;
+    if (!value) return;
     currentNote && handleCancelButton();
     const date = formattedDate(new Date());
     const time = formattedTime(new Date());
@@ -89,7 +98,7 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
       const updatedNote = {
         ...currentNote,
         title: textInput,
-        body: textArea,
+        body: value,
         date,
         time,
         day,
@@ -108,8 +117,8 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
       // create new note and upload it to the server
       // uploading object
       const singleNoteData = {
-        title: textInput,
-        body: textArea,
+        title: "",
+        body: value,
         date,
         time,
         day,
@@ -167,24 +176,30 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
                 {" "}
                 {<FaFile />}Create New Note
               </label>
-              <input
-                id="note-title"
-                type="text"
-                placeholder="Title"
+              {/* <input */}
+              {/*   id="note-title" */}
+              {/*   type="text" */}
+              {/*   placeholder="Title" */}
+              {/*   autoFocus */}
+              {/*   onKeyDown={handleKeyPress} */}
+              {/*   value={textInput} */}
+              {/*   onChange={(e) => handleTextInputChange(e.target)} */}
+              {/* /> */}
+              {/* <textarea */}
+              {/*   ref={textAreaRef} */}
+              {/*   id="note-body" */}
+              {/*   rows={10} */}
+              {/*   spellCheck={false} */}
+              {/*   placeholder="Content" */}
+              {/*   value={textArea} */}
+              {/*   onChange={(e) => handleTextAreaChange(e.target)} */}
+              {/* ></textarea> */}
+              <ReactQuill
                 autoFocus
-                onKeyDown={handleKeyPress}
-                value={textInput}
-                onChange={(e) => handleTextInputChange(e.target)}
+                theme="bubble"
+                value={value}
+                onChange={setValue}
               />
-              <textarea
-                ref={textAreaRef}
-                id="note-body"
-                rows={10}
-                spellCheck={false}
-                placeholder="Content"
-                value={textArea}
-                onChange={(e) => handleTextAreaChange(e.target)}
-              ></textarea>
               <div className="flex justify-between">
                 <button
                   onClick={() => handleCancelButton()}

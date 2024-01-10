@@ -31,8 +31,8 @@ import PropTypes from "prop-types";
 
 export const Note = ({ data, trash, archive, folderId }) => {
   const dispatch = useDispatch();
-  const textAreaRef = useRef(null);
-  const [height, setHeight] = useState(0);
+  // const textAreaRef = useRef(null);
+  // const [height, setHeight] = useState(0);
 
   // MUI thingssss
   const [anchorEl, setAnchorEl] = useState(null);
@@ -41,8 +41,8 @@ export const Note = ({ data, trash, archive, folderId }) => {
   const handleClose = () => setAnchorEl(null);
 
   useEffect(() => {
-    const scrollAreaHeight = textAreaRef.current.scrollHeight;
-    setHeight(`${scrollAreaHeight}px`);
+    // const scrollAreaHeight = textAreaRef.current.scrollHeight;
+    // setHeight(`${scrollAreaHeight}px`);
   }, []);
 
   const handleDeleteNote = async (noteId) => {
@@ -250,20 +250,24 @@ export const Note = ({ data, trash, archive, folderId }) => {
           </Menu>
         </div>
       </div>
-      <h3 className="text-xl py-2 font-normal tracking-wider border-b border-slate-400 border-bottom">
-        {data?.title}
-      </h3>
-      <textarea
-        // className="text-base leading-7 tracking-wider text-left  font-normal opacity-70"
-        // style={{ wordWrap: "break-word" }}
-        ref={textAreaRef}
-        className="note-textarea w-full text-base leading-7 font-normal opacity-70 bg-transparent border-none outline-none "
-        style={{
-          height: height,
-        }}
-        readOnly
-        value={data?.body}
-      />
+      {/* <h3 className="text-xl py-2 font-normal tracking-wider border-b border-slate-400 border-bottom"> */}
+      {/*   {data?.title} */}
+      {/* </h3> */}
+      {/* <textarea */}
+      {/*   // className="text-base leading-7 tracking-wider text-left  font-normal opacity-70" */}
+      {/*   // style={{ wordWrap: "break-word" }} */}
+      {/*   ref={textAreaRef} */}
+      {/*   className="note-textarea w-full text-base leading-7 font-normal opacity-70 bg-transparent border-none outline-none " */}
+      {/*   style={{ */}
+      {/*     height: height, */}
+      {/*   }} */}
+      {/*   readOnly */}
+      {/*   value={data?.body} */}
+      {/* /> */}
+      <div
+        dangerouslySetInnerHTML={{ __html: data?.body }}
+        className="w-full opacity-70 bg-transparent"
+      ></div>
       <div
         style={{ fontSize: "1.5rem" }}
         className="flex gap-2 items-center opacity-50"

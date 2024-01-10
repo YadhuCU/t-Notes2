@@ -20,7 +20,13 @@
   display: grid;
   grid-template-columns: clamp(60px, 50%, 10vw) auto;
 }
-@media (max-width: 600px) {
+h1 {
+  font-size: 2rem;
+  font-weight: var(--fw-700);
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: var(--fw-700);
 }
 
 .active:after {
