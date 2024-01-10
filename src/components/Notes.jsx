@@ -15,7 +15,7 @@ export const Notes = () => {
     dispatch(addNotesToStore([...data].reverse()));
   };
   useEffect(() => {
-    getData();
+    // getData();
   }, []);
 
   return (

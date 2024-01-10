@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -22,7 +22,11 @@ import {
   updateNoteAPI,
   uploadNoteAPI,
 } from "../services/allAPIs";
-import { addNotesToStore } from "../redux/addNoteSlice";
+import {
+  addNotesToStore,
+  deleteNoteFromFirebase,
+  fetchNotesFromFirebase,
+} from "../redux/addNoteSlice";
 import { AddNote } from "./AddNote";
 import { addArchivesToStore } from "../redux/addArchiveSlice";
 import { addFoldersToStore } from "../redux/addFolderSlice";
@@ -68,30 +72,33 @@ export const Note = ({ data, trash, archive, folderId }) => {
         console.error("Deletion ", error);
       }
     } else {
-      try {
-        const { data } = await getSingleNoteAPI(noteId);
-        await addToTrashAPI(data);
-        await deleteNoteAPI(noteId);
-      } catch (error) {
-        console.error("Deletion API error: ", error);
-      }
-      // deleting the note also from the Archive
-      //TODO: fetch allArchiveNote and check if it's there
-      //TODO: if YES, make deletea archive api call
-
-      //1.
-      try {
-        const { data } = await getAllArchiveAPI();
-        const archiveNote = data.find((item) => item.id == noteId);
-        if (archiveNote) {
-          await removeFromArchiveAPI(noteId);
-        }
-      } catch (error) {
-        console.error("Error : ", error);
-      }
-
-      const { data } = await getAllNoteAPI();
-      dispatch(addNotesToStore([...data].reverse()));
+      // delete note from firebase db 'notes'
+      dispatch(deleteNoteFromFirebase(noteId));
+      dispatch(fetchNotesFromFirebase());
+      // try {
+      //   const { data } = await getSingleNoteAPI(noteId);
+      //   await addToTrashAPI(data);
+      //   await deleteNoteAPI(noteId);
+      // } catch (error) {
+      //   console.error("Deletion API error: ", error);
+      // }
+      // // deleting the note also from the Archive
+      // //TODO: fetch allArchiveNote and check if it's there
+      // //TODO: if YES, make deletea archive api call
+      //
+      // //1.
+      // try {
+      //   const { data } = await getAllArchiveAPI();
+      //   const archiveNote = data.find((item) => item.id == noteId);
+      //   if (archiveNote) {
+      //     await removeFromArchiveAPI(noteId);
+      //   }
+      // } catch (error) {
+      //   console.error("Error : ", error);
+      // }
+      //
+      // const { data } = await getAllNoteAPI();
+      // dispatch(addNotesToStore([...data].reverse()));
     }
     handleClose();
   };

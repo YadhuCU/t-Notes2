@@ -66,6 +66,7 @@ export const TimeSort = ({ type }) => {
     <ul
       ref={allList}
       className="my-4 flex justify-center lg:justify-start gap-8 md:gap-14 border-b py-2 w-full"
+      style={{ listStyle: "none" }}
     >
       {["All", "Todays", "This Month"].map((item) => (
         <li

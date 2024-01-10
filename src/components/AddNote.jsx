@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useRef } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaFile } from "react-icons/fa";
 import { IoMdAddCircle } from "react-icons/io";
 import {
@@ -15,13 +14,12 @@ import {
 } from "@mui/material";
 
 import { colors } from "../utils/colors";
-import {
-  getAllNoteAPI,
-  updateNoteAPI,
-  uploadNoteAPI,
-} from "../services/allAPIs";
 import { useDispatch } from "react-redux";
-import { addNotesToStore } from "../redux/addNoteSlice";
+import {
+  addNoteToFirebase,
+  fetchNotesFromFirebase,
+  updateNoteInFirebase,
+} from "../redux/addNoteSlice";
 import { formattedDate, formattedDay, formattedTime } from "../utils/formatter";
 import PropTypes from "prop-types";
 
@@ -43,14 +41,10 @@ const style = {
 
 export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
   const [open, setOpen] = useState(false);
-  const textAreaRef = useRef(null);
-  const [textInput, setTextInput] = useState(currentNote?.title || "");
-  const [textArea, setTextArea] = useState(currentNote?.body || "");
-  const [color, setColor] = useState(currentNote?.color || "#f5f5f4");
-  const dispatch = useDispatch();
-
   // *quill
   const [value, setValue] = useState(currentNote?.body || "");
+  const [color, setColor] = useState(currentNote?.color || "#f5f5f4");
+  const dispatch = useDispatch();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(true);
@@ -60,21 +54,11 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleCloseColor = () => setAnchorEl(null);
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      textAreaRef.current.focus();
-    }
-  };
-
-  const handleTextInputChange = ({ value }) => setTextInput(value);
-  const handleTextAreaChange = ({ value }) => setTextArea(value);
   const handleColorPick = (color) => setColor(color);
 
   const handleCancelButton = () => {
     setTimeout(() => {
       setColor("#f5f5f4");
-      setTextInput("");
-      setTextArea("");
       setValue("");
     }, 1000);
     setOpen(false);
@@ -82,6 +66,10 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
       handlCloseEditMenu();
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchNotesFromFirebase());
+  }, []);
 
   const handleUpload = async () => {
     handleCancelButton();
@@ -94,10 +82,8 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
     let response;
 
     if (currentNote) {
-      // update the existing note in server.
+      // update the note in firebase
       const updatedNote = {
-        ...currentNote,
-        title: textInput,
         body: value,
         date,
         time,
@@ -105,19 +91,31 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
         color: color,
       };
 
-      try {
-        response = await updateNoteAPI(currentNote.id, updatedNote);
-      } catch (error) {
-        console.error("Updation Error: ", error);
-      }
-      const { data } = await getAllNoteAPI();
-      dispatch(addNotesToStore([...data].reverse()));
-      handlCloseEditMenu();
+      dispatch(updateNoteInFirebase({ id: currentNote.id, updatedNote }));
+      dispatch(fetchNotesFromFirebase());
+
+      // update the existing note in server.
+      // const updatedNote = {
+      //   ...currentNote,
+      //   body: value,
+      //   date,
+      //   time,
+      //   day,
+      //   color: color,
+      // };
+      //
+      // try {
+      //   response = await updateNoteAPI(currentNote.id, updatedNote);
+      // } catch (error) {
+      //   console.error("Updation Error: ", error);
+      // }
+      // const { data } = await getAllNoteAPI();
+      // dispatch(addNotesToStore([...data].reverse()));
+      // handlCloseEditMenu();
     } else {
       // create new note and upload it to the server
       // uploading object
       const singleNoteData = {
-        title: "",
         body: value,
         date,
         time,
@@ -125,17 +123,19 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
         color: color,
         archive: false,
       };
-      try {
-        response = await uploadNoteAPI(singleNoteData);
-      } catch (error) {
-        console.error("Error: ", error);
-      }
-      if (response.status >= 200 && response.status <= 300) {
-        const { data } = await getAllNoteAPI();
-        dispatch(addNotesToStore([...data].reverse()));
-      } else {
-        console.error("Error: ", response);
-      }
+      dispatch(addNoteToFirebase(singleNoteData));
+      dispatch(fetchNotesFromFirebase());
+      // try {
+      //   response = await uploadNoteAPI(singleNoteData);
+      // } catch (error) {
+      //   console.error("Error: ", error);
+      // }
+      // if (response.status >= 200 && response.status <= 300) {
+      //   const { data } = await getAllNoteAPI();
+      //   dispatch(addNotesToStore([...data].reverse()));
+      // } else {
+      //   console.error("Error: ", response);
+      // }
     }
   };
 
@@ -176,24 +176,7 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
                 {" "}
                 {<FaFile />}Create New Note
               </label>
-              {/* <input */}
-              {/*   id="note-title" */}
-              {/*   type="text" */}
-              {/*   placeholder="Title" */}
-              {/*   autoFocus */}
-              {/*   onKeyDown={handleKeyPress} */}
-              {/*   value={textInput} */}
-              {/*   onChange={(e) => handleTextInputChange(e.target)} */}
-              {/* /> */}
-              {/* <textarea */}
-              {/*   ref={textAreaRef} */}
-              {/*   id="note-body" */}
-              {/*   rows={10} */}
-              {/*   spellCheck={false} */}
-              {/*   placeholder="Content" */}
-              {/*   value={textArea} */}
-              {/*   onChange={(e) => handleTextAreaChange(e.target)} */}
-              {/* ></textarea> */}
+              {/*  quill */}
               <ReactQuill
                 autoFocus
                 theme="bubble"
