@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ff-primary: "Roboto Condensed", sans-serif;
+  --fw-200: 200;
+  --fw-400: 400;
+  --fw-700: 700;
+}
+* {
+  font-family: var(--ff-primary);
+}
+
+#root {
+  background: linear-gradient(235deg, #fef2f2, #f0fdfa);
+}
+
+.grid-app {
+  display: grid;
+  grid-template-columns: clamp(60px, 50%, 10vw) auto;
+}
+@media (max-width: 600px) {
+}
+
+.active:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  right: 50%;
+  height: 3px;
+  background-color: black;
+  animation: enlarge 220ms ease-in-out forwards;
+}
+@keyframes enlarge {
+  0% {
+    left: 50%;
+    right: 50%;
+  }
+  100% {
+    left: 0;
+    right: 0;
+  }
+}
+.add-note input,
+.add-note textarea,
+.add-note input:focus,
+.add-note textarea:focus {
+  border: none;
+  outline: none;
+  background: none;
+}
+.add-note input {
+  font-size: 2rem;
+}
+.add-note textarea {
+  resize: none;
+}
+.note-textarea {
+  resize: none;
+  width: 100%;
+  height: 100%;
+}
+textarea::-webkit-scrollbar {
+  width: 0px;
+}
