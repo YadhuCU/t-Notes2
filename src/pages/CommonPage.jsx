@@ -7,22 +7,30 @@ import { getSingleFolderAPI } from "../services/allAPIs";
 import { useSelector } from "react-redux";
 
 const CommonPage = ({ pageTitle, id }) => {
-  const [notes, setNotes] = useState([]);
+  const [currNotes, setCurrNotes] = useState([]);
   const { folders } = useSelector((state) => state.folder);
+  const { notes } = useSelector((state) => state.note);
 
   useEffect(() => {
-    const newData = folders.find((item) => item.id == id);
-    console.log("newDate-> ", newData.notes[0]);
-    setNotes(newData.notes);
-  }, [folders, id]);
+    const currentFolder = folders.find((item) => item.id == id);
+    const currentNotes = [];
+    currentFolder.notes.forEach((currNoteId) => {
+      const singleNote = notes.find((note) => note.id == currNoteId);
+      if (singleNote) {
+        currentNotes.push(singleNote);
+      }
+    });
+
+    setCurrNotes(currentNotes);
+  }, [folders, id, notes]);
 
   return (
     <div className=" container flex flex-col items-center lg:items-start px-2 py-4 mt-5">
       <h1 className="text-5xl">{pageTitle || "None"}</h1>
       <TimeSort />
       <div className="my-10 columns-1 gap-8 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5">
-        {notes?.length > 0 &&
-          notes?.map((item, index) => (
+        {currNotes?.length > 0 &&
+          currNotes?.map((item, index) => (
             <Note key={index} folderId={id} data={item} />
           ))}
       </div>

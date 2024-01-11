@@ -68,7 +68,7 @@ export const Note = ({ data, trash, archive, folderId }) => {
       //   console.error("Error", error);
       // }
       const currentFolder = folders.find((item) => item.id == folderId);
-      const newNote = currentFolder.notes.filter((item) => item.id != noteId);
+      const newNote = currentFolder.notes.filter((itemId) => itemId != noteId);
 
       const newFolder = {
         ...currentFolder,

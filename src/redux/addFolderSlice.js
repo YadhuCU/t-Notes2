@@ -49,7 +49,8 @@ export const updateFolderInFirebase = createAsyncThunk(
     return await updateDoc(doc(db, "folders", id), folder);
   },
 );
-//TODO: add note to folder
+
+//TODO: get notes from notes db with currespond noteId in folders.notes
 
 const addFolderSlice = createSlice({
   name: "addFolder",

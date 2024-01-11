@@ -70,15 +70,25 @@ export const Folder = ({ home, folder }) => {
     // }
     // firebase
 
-    const itemFound = folder.notes.find((item) => item.id == note.id);
+    // const itemFound = folder.notes.find((item) => item.id == note.id);
+    // if (itemFound) return;
+    //
+    // console.log("folder-> drop: ", folder);
+    // console.log("folder id -> ", folderId);
+    // console.log("note-> drop: ", note);
+    // const newFolder = {
+    //   ...folder,
+    //   notes: [...folder.notes, note],
+    // };
+    // dispatch(updateFolderInFirebase({ id: folderId, folder: newFolder }));
+    // dispatch(getAllFoldersFromFirebase());
+
+    const itemFound = folder.notes.find((noteId) => noteId == note.id);
     if (itemFound) return;
 
-    console.log("folder-> drop: ", folder);
-    console.log("folder id -> ", folderId);
-    console.log("note-> drop: ", note);
     const newFolder = {
       ...folder,
-      notes: [...folder.notes, note],
+      notes: [...folder.notes, note.id],
     };
     dispatch(updateFolderInFirebase({ id: folderId, folder: newFolder }));
     dispatch(getAllFoldersFromFirebase());
