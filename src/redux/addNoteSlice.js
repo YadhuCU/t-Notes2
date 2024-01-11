@@ -44,10 +44,43 @@ export const updateNoteInFirebase = createAsyncThunk(
   },
 );
 
+export const addNoteToArchiveFirebase = createAsyncThunk(
+  "addNote/addNoteToArchiveFirebase",
+  async ({ id, note }) => {
+    const newNote = {
+      body: note.body,
+      date: note.date,
+      time: note.time,
+      day: note.day,
+      color: note.color,
+      archive: true,
+    };
+    const noteRef = doc(db, "notes", id);
+    return await updateDoc(noteRef, newNote);
+  },
+);
+
+export const removeNoteFromArchiveFirebase = createAsyncThunk(
+  "addNote/removeNoteFromArchiveFirebase",
+  async ({ id, note }) => {
+    const newNote = {
+      body: note.body,
+      date: note.date,
+      time: note.time,
+      day: note.day,
+      color: note.color,
+      archive: false,
+    };
+    const noteRef = doc(db, "notes", id);
+    return await updateDoc(noteRef, newNote);
+  },
+);
+
 const addNoteSlice = createSlice({
   name: "addNote",
   initialState: {
     notes: [],
+    archives: [],
     loading: false,
     error: "",
   },
@@ -59,6 +92,11 @@ const addNoteSlice = createSlice({
     builder.addCase(fetchNotesFromFirebase.fulfilled, (state, action) => {
       state.loading = false;
       state.notes = action.payload;
+      const newArchives = action.payload.filter((item) => {
+        console.log("item.archive : ", item.archive);
+        return item.archive;
+      });
+      state.archives = [...newArchives];
     });
     builder.addCase(fetchNotesFromFirebase.rejected, (state) => {
       state.loading = false;
@@ -73,17 +111,14 @@ const addNoteSlice = createSlice({
       state.error = "Error: Firebase deleteDoc()";
     });
     // delete note from firebase rejected
-    builder.addCase(updateNoteInFirebase.pending, (state, action) => {
-      console.log("updateNoteInFirebase pending", action.payload);
-    });
-    // delete note from firebase rejected
-    builder.addCase(updateNoteInFirebase.fulfilled, (state, action) => {
-      console.log("updateNoteInFirebase fulfilled", action.payload);
-    });
-    // delete note from firebase rejected
-    builder.addCase(updateNoteInFirebase.rejected, (state, action) => {
-      console.log("updateNoteInFirebase rejected", action.payload);
+    builder.addCase(updateNoteInFirebase.rejected, (state) => {
       state.error = "Error: Firebase updateDoc()";
+    });
+    builder.addCase(addNoteToArchiveFirebase.rejected, (state) => {
+      state.error = "Error: Firebase updateDocArchiveTrue()";
+    });
+    builder.addCase(removeNoteFromArchiveFirebase.rejected, (state) => {
+      state.error = "Error: Firebase updateDocArchiveFalse()";
     });
   },
 });

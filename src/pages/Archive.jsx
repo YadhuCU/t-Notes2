@@ -4,19 +4,15 @@ import { useEffect } from "react";
 import { getAllArchiveAPI } from "../services/allAPIs";
 import { useSelector, useDispatch } from "react-redux";
 import { addArchivesToStore } from "../redux/addArchiveSlice";
+import { fetchNotesFromFirebase } from "../redux/addNoteSlice";
 
 const Archive = () => {
-  const { archives } = useSelector((state) => state.archive);
+  const { archives } = useSelector((state) => state.note);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getAllArchive();
+    dispatch(fetchNotesFromFirebase());
   }, []);
-
-  const getAllArchive = async () => {
-    const { data } = await getAllArchiveAPI();
-    dispatch(addArchivesToStore(data));
-  };
 
   return (
     <div className=" container flex flex-col items-center lg:items-start px-2 py-4 mt-5">

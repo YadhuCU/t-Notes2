@@ -79,7 +79,6 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
     const date = formattedDate(new Date());
     const time = formattedTime(new Date());
     const day = formattedDay(new Date());
-    let response;
 
     if (currentNote) {
       // update the note in firebase
@@ -89,6 +88,7 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
         time,
         day,
         color: color,
+        archive: currentNote.archive,
       };
 
       dispatch(updateNoteInFirebase({ id: currentNote.id, updatedNote }));

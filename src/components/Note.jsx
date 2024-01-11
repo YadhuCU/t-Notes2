@@ -23,10 +23,12 @@ import {
   uploadNoteAPI,
 } from "../services/allAPIs";
 import {
+  addNoteToArchiveFirebase,
   addNoteToFirebase,
   addNotesToStore,
   deleteNoteFromFirebase,
   fetchNotesFromFirebase,
+  removeNoteFromArchiveFirebase,
 } from "../redux/addNoteSlice";
 import { AddNote } from "./AddNote";
 import { addArchivesToStore } from "../redux/addArchiveSlice";
@@ -141,76 +143,90 @@ export const Note = ({ data, trash, archive, folderId }) => {
   };
 
   const handleAddToArchive = async (note) => {
-    // if the note in Archive page
-    if (archive) {
-      // remove from the archive and update the store
-      // remove from archive db
-      await removeFromArchiveAPI(note.id);
-      // change the value 'archive' in note db
-      const singleNote = await getSingleNoteAPI(note.id);
+    // firebase
 
-      const newSinlgeNote = {
-        ...singleNote.data,
-        archive: false,
-      };
-      await updateNoteAPI(note.id, newSinlgeNote);
-
-      // updating the store of Archive
-      const { data } = await getAllArchiveAPI();
-      dispatch(addArchivesToStore([...data].reverse()));
-    } else {
-      // in other pages
-      const { data } = await getAllArchiveAPI();
-      const isArchived = data.find((item) => item.id == note.id);
-      if (isArchived) {
-        await removeFromArchiveAPI(note.id);
-        // change the value 'archive' in note db
-        const singleNote = await getSingleNoteAPI(note.id);
-
-        const newSinlgeNote = {
-          ...singleNote.data,
-          archive: false,
-        };
-        await updateNoteAPI(note.id, newSinlgeNote);
-        // updating the store
-        try {
-          const { data } = await getAllNoteAPI();
-          dispatch(addNotesToStore([...data].reverse()));
-        } catch (error) {
-          console.error("Error: ", error);
-        }
-        try {
-          const { data } = await getAllArchiveAPI();
-          dispatch(addArchivesToStore([...data].reverse()));
-        } catch (error) {
-          console.error("Error: ", error);
-        }
-      } else {
-        // fetchinge singe note to update the 'archive' field
-        const singleNote = await getSingleNoteAPI(note.id);
-        const newSinlgeNote = {
-          ...singleNote.data,
-          archive: true,
-        };
-        await updateNoteAPI(note.id, newSinlgeNote);
-        // adding note to archive db
-        await addToArchiveAPI(newSinlgeNote);
-        // updating the store
-        try {
-          const { data } = await getAllNoteAPI();
-          dispatch(addNotesToStore([...data].reverse()));
-        } catch (error) {
-          console.error("Error: ", error);
-        }
-        try {
-          const { data } = await getAllArchiveAPI();
-          dispatch(addArchivesToStore([...data].reverse()));
-        } catch (error) {
-          console.error("Error: ", error);
-        }
+    if (note.archive) {
+      dispatch(removeNoteFromArchiveFirebase({ id: note.id, note: note }));
+      if (archive) {
+        dispatch(fetchNotesFromFirebase());
       }
+    } else {
+      dispatch(addNoteToArchiveFirebase({ id: note.id, note: note }));
     }
+
     handleClose();
+
+    //TODO: what the fuck am i doing here, becaues i reduce the fucking code in below with above.
+    //
+    // if the note in Archive page
+    // if (archive) {
+    //   // remove from the archive and update the store
+    //   // remove from archive db
+    //   await removeFromArchiveAPI(note.id);
+    //   // change the value 'archive' in note db
+    //   const singleNote = await getSingleNoteAPI(note.id);
+    //
+    //   const newSinlgeNote = {
+    //     ...singleNote.data,
+    //     archive: false,
+    //   };
+    //   await updateNoteAPI(note.id, newSinlgeNote);
+    //
+    //   // updating the store of Archive
+    //   const { data } = await getAllArchiveAPI();
+    //   dispatch(addArchivesToStore([...data].reverse()));
+    // } else {
+    //   // in other pages
+    //   const { data } = await getAllArchiveAPI();
+    //   const isArchived = data.find((item) => item.id == note.id);
+    //   if (isArchived) {
+    //     await removeFromArchiveAPI(note.id);
+    //     // change the value 'archive' in note db
+    //     const singleNote = await getSingleNoteAPI(note.id);
+    //
+    //     const newSinlgeNote = {
+    //       ...singleNote.data,
+    //       archive: false,
+    //     };
+    //     await updateNoteAPI(note.id, newSinlgeNote);
+    //     // updating the store
+    //     try {
+    //       const { data } = await getAllNoteAPI();
+    //       dispatch(addNotesToStore([...data].reverse()));
+    //     } catch (error) {
+    //       console.error("Error: ", error);
+    //     }
+    //     try {
+    //       const { data } = await getAllArchiveAPI();
+    //       dispatch(addArchivesToStore([...data].reverse()));
+    //     } catch (error) {
+    //       console.error("Error: ", error);
+    //     }
+    //   } else {
+    //     // fetchinge singe note to update the 'archive' field
+    //     const singleNote = await getSingleNoteAPI(note.id);
+    //     const newSinlgeNote = {
+    //       ...singleNote.data,
+    //       archive: true,
+    //     };
+    //     await updateNoteAPI(note.id, newSinlgeNote);
+    //     // adding note to archive db
+    //     await addToArchiveAPI(newSinlgeNote);
+    //     // updating the store
+    //     try {
+    //       const { data } = await getAllNoteAPI();
+    //       dispatch(addNotesToStore([...data].reverse()));
+    //     } catch (error) {
+    //       console.error("Error: ", error);
+    //     }
+    //     try {
+    //       const { data } = await getAllArchiveAPI();
+    //       dispatch(addArchivesToStore([...data].reverse()));
+    //     } catch (error) {
+    //       console.error("Error: ", error);
+    //     }
+    //   }
+    // }
   };
 
   // restoring note
