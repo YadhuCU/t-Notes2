@@ -114,7 +114,9 @@ export const Note = ({ data, trash, archive, folderId }) => {
       style={{
         backgroundColor: data.color,
       }}
-      className="hover:shadow-2xl transition duration-250 ease-out break-inside-avoid rounded-[20px] p-5 flex flex-col gap-5 mb-5 max-w-sm mx-auto"
+      className={`${
+        drag ? "cursor-grab" : "cursor-default"
+      } hover:shadow-2xl transition duration-250 ease-out break-inside-avoid rounded-[20px] p-5 flex flex-col gap-5 mb-5 max-w-sm mx-auto`}
     >
       <div className="flex justify-between items-center">
         <div
@@ -185,7 +187,7 @@ export const Note = ({ data, trash, archive, folderId }) => {
         </p>
         <div
           onClick={() => setDrag((prev) => !prev)}
-          title="draggable"
+          title="toggle draggable"
           className={`ml-auto rounded-full p-2 cursor-pointer ${
             drag || "opacity-30"
           }`}

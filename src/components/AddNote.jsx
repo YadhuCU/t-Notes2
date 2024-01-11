@@ -113,7 +113,7 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
       className={
         currentNote
           ? `w-full`
-          : `mx-auto max-w-sm break-inside-avoid flex justify-center items-center border-dashed border-2 border-slate-400 rounded-lg  p-5  flex-col gap-5 mb-5 h-40 `
+          : `mx-auto max-w-sm break-inside-avoid flex justify-center items-center border-dashed border-2 border-slate-400 rounded-[20px]  p-5  flex-col gap-5 mb-5 h-40 `
       }
     >
       {currentNote ? (

@@ -108,7 +108,7 @@ export const Folder = ({ home, folder }) => {
         style={{ fontSize: "3rem", color: changeColor(folder?.color, 23) }}
         className="hidden md:block"
       />
-      <Link to={`/folders/${folder?.id}`}>
+      <Link style={{ textDecoration: "none" }} to={`/folders/${folder?.id}`}>
         <div>
           <p
             style={{
