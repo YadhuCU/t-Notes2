@@ -6,7 +6,10 @@ import { AddFolder } from "./AddFolder";
 import { useEffect } from "react";
 import { getAllFoldersAPI } from "../services/allAPIs";
 import { useSelector, useDispatch } from "react-redux";
-import { addFoldersToStore } from "../redux/addFolderSlice";
+import {
+  addFoldersToStore,
+  getAllFoldersFromFirebase,
+} from "../redux/addFolderSlice";
 
 export const Folders = () => {
   const { folders } = useSelector((state) => state.folder);
@@ -15,7 +18,8 @@ export const Folders = () => {
   const getAllFolders = async () => {
     try {
       const { data } = await getAllFoldersAPI();
-      dispatch(addFoldersToStore([...data].reverse()));
+      // dispatch(addFoldersToStore([...data].reverse()));
+      dispatch(getAllFoldersFromFirebase());
     } catch (error) {
       console.error("Error : ", error);
     }

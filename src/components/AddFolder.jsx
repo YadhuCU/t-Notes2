@@ -22,7 +22,12 @@ import {
   getAllFoldersAPI,
 } from "../services/allAPIs";
 import { useDispatch } from "react-redux";
-import { addFoldersToStore } from "../redux/addFolderSlice";
+import {
+  addFolderToFirebase,
+  addFoldersToStore,
+  getAllFoldersFromFirebase,
+  updateFolderInFirebase,
+} from "../redux/addFolderSlice";
 import PropTypes from "prop-types";
 
 const style = {
@@ -77,24 +82,29 @@ export const AddFolder = ({ entry, editFolder, handleCloseEditMenu }) => {
     if (editFolder) {
       // update the existing Folder
       const newFolder = {
-        ...editFolder,
         title: textInput,
         color,
         date,
+        notes: editFolder.notes,
       };
-      try {
-        await updateFolderAPI(editFolder.id, newFolder);
-      } catch (error) {
-        console.error("Folder Uploading Error: ", error);
-      }
-      if (response.status >= 200 && response.status < 300) {
-        // success (file creation)
-        const { data } = await getAllFoldersAPI();
-        dispatch(addFoldersToStore([...data].reverse()));
-      } else {
-        // failed (file creation)
-        console.error("Stataus code error ", response.status);
-      }
+      dispatch(
+        updateFolderInFirebase({ id: editFolder.id, folder: newFolder }),
+      );
+      dispatch(getAllFoldersFromFirebase());
+
+      // try {
+      //   await updateFolderAPI(editFolder.id, newFolder);
+      // } catch (error) {
+      //   console.error("Folder Uploading Error: ", error);
+      // }
+      // if (response.status >= 200 && response.status < 300) {
+      //   // success (file creation)
+      //   const { data } = await getAllFoldersAPI();
+      //   dispatch(addFoldersToStore([...data].reverse()));
+      // } else {
+      //   // failed (file creation)
+      //   console.error("Stataus code error ", response.status);
+      // }
     } else {
       // folder object
       const newFolder = {
@@ -103,19 +113,21 @@ export const AddFolder = ({ entry, editFolder, handleCloseEditMenu }) => {
         date,
         notes: [],
       };
-      try {
-        response = await addFolderAPI(newFolder);
-      } catch (error) {
-        console.error("Folder Uploading Error: ", error);
-      }
-      if (response.status >= 200 && response.status < 300) {
-        // success (file creation)
-        const { data } = await getAllFoldersAPI();
-        dispatch(addFoldersToStore([...data].reverse()));
-      } else {
-        // failed (file creation)
-        console.error("Stataus code error ", response.status);
-      }
+      dispatch(addFolderToFirebase(newFolder));
+      dispatch(getAllFoldersFromFirebase());
+      // try {
+      //   response = await addFolderAPI(newFolder);
+      // } catch (error) {
+      //   console.error("Folder Uploading Error: ", error);
+      // }
+      // if (response.status >= 200 && response.status < 300) {
+      //   // success (file creation)
+      //   const { data } = await getAllFoldersAPI();
+      //   dispatch(addFoldersToStore([...data].reverse()));
+      // } else {
+      //   // failed (file creation)
+      //   console.error("Stataus code error ", response.status);
+      // }
     }
   };
 

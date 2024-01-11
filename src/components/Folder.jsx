@@ -14,7 +14,12 @@ import {
   updateFolderAPI,
 } from "../services/allAPIs";
 import { useDispatch } from "react-redux";
-import { addFoldersToStore } from "../redux/addFolderSlice";
+import {
+  addFoldersToStore,
+  deleteFolderFromFirebase,
+  getAllFoldersFromFirebase,
+  updateFolderInFirebase,
+} from "../redux/addFolderSlice";
 import { AddFolder } from "./AddFolder";
 
 export const Folder = ({ home, folder }) => {
@@ -25,42 +30,58 @@ export const Folder = ({ home, folder }) => {
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  const handleDeleteFolder = async (id) => {
-    let response;
-    try {
-      response = await deleteFolderAPI(id);
-    } catch (error) {
-      console.error(error);
-    }
-    if (response.status >= 200 && response.status < 300) {
-      // deletion success
-      const { data } = await getAllFoldersAPI();
-      dispatch(addFoldersToStore([...data].reverse()));
-    } else {
-      // deletion failed
-      console.error("Delete Folder Failed: ", response.status);
-    }
+  const handleDeleteFolder = (id) => {
+    dispatch(deleteFolderFromFirebase(id));
+    dispatch(getAllFoldersFromFirebase());
+    // let response;
+    // try {
+    //   response = await deleteFolderAPI(id);
+    // } catch (error) {
+    //   console.error(error);
+    // }
+    // if (response.status >= 200 && response.status < 300) {
+    //   // deletion success
+    //   const { data } = await getAllFoldersAPI();
+    //   dispatch(addFoldersToStore([...data].reverse()));
+    // } else {
+    //   // deletion failed
+    //   console.error("Delete Folder Failed: ", response.status);
+    // }
     handleClose();
   };
 
   const handleDrop = async (event, folderId) => {
     const note = JSON.parse(event.dataTransfer.getData("note"));
-    const { data } = await getSingleFolderAPI(folderId);
-    // checking it's already in the folder.
-    const itemFound = data.notes.find((item) => item.id == note.id);
+    // const { data } = await getSingleFolderAPI(folderId);
+    // // checking it's already in the folder.
+    // const itemFound = data.notes.find((item) => item.id == note.id);
+    // if (itemFound) return;
+    //
+    // data.notes.push(note);
+    // try {
+    //   const result = await updateFolderAPI(folderId, data);
+    //   if (result.status >= 200 && result.status < 300) {
+    //     // success
+    //     const { data } = await getAllFoldersAPI();
+    //     dispatch(addFoldersToStore([...data].reverse()));
+    //   }
+    // } catch (error) {
+    //   console.erro("Folder updation Error: ", error);
+    // }
+    // firebase
+
+    const itemFound = folder.notes.find((item) => item.id == note.id);
     if (itemFound) return;
 
-    data.notes.push(note);
-    try {
-      const result = await updateFolderAPI(folderId, data);
-      if (result.status >= 200 && result.status < 300) {
-        // success
-        const { data } = await getAllFoldersAPI();
-        dispatch(addFoldersToStore([...data].reverse()));
-      }
-    } catch (error) {
-      console.erro("Folder updation Error: ", error);
-    }
+    console.log("folder-> drop: ", folder);
+    console.log("folder id -> ", folderId);
+    console.log("note-> drop: ", note);
+    const newFolder = {
+      ...folder,
+      notes: [...folder.notes, note],
+    };
+    dispatch(updateFolderInFirebase({ id: folderId, folder: newFolder }));
+    dispatch(getAllFoldersFromFirebase());
   };
 
   const changeColor = (color, intencity) => {

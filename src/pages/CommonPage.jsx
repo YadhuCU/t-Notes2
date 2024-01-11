@@ -12,6 +12,7 @@ const CommonPage = ({ pageTitle, id }) => {
 
   useEffect(() => {
     const newData = folders.find((item) => item.id == id);
+    console.log("newDate-> ", newData.notes[0]);
     setNotes(newData.notes);
   }, [folders, id]);
 

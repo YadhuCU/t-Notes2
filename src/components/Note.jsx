@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { IoMdTimer } from "react-icons/io";
 import { BsCalendar2DateFill } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addToArchiveAPI,
   addToTrashAPI,
@@ -29,7 +29,11 @@ import {
 } from "../redux/addNoteSlice";
 import { AddNote } from "./AddNote";
 import { addArchivesToStore } from "../redux/addArchiveSlice";
-import { addFoldersToStore } from "../redux/addFolderSlice";
+import {
+  addFoldersToStore,
+  getAllFoldersFromFirebase,
+  updateFolderInFirebase,
+} from "../redux/addFolderSlice";
 import { addTrashToStore } from "../redux/addTrashSlice";
 import PropTypes from "prop-types";
 
@@ -37,6 +41,7 @@ export const Note = ({ data, trash, archive, folderId }) => {
   const dispatch = useDispatch();
   // const textAreaRef = useRef(null);
   // const [height, setHeight] = useState(0);
+  const { folders } = useSelector((state) => state.folder);
 
   // MUI thingssss
   const [anchorEl, setAnchorEl] = useState(null);
@@ -52,16 +57,27 @@ export const Note = ({ data, trash, archive, folderId }) => {
   const handleDeleteNote = async (noteId) => {
     // note in the  folder
     if (folderId) {
-      const { data } = await getSingleFolderAPI(folderId);
-      const newFolderNote = data.notes.filter((item) => item.id != noteId);
-      const newData = { ...data, notes: newFolderNote };
-      await updateFolderAPI(folderId, newData);
-      try {
-        const { data } = await getAllFoldersAPI();
-        dispatch(addFoldersToStore([...data].reverse()));
-      } catch (error) {
-        console.error("Error", error);
-      }
+      // const { data } = await getSingleFolderAPI(folderId);
+      // const newFolderNote = data.notes.filter((item) => item.id != noteId);
+      // const newData = { ...data, notes: newFolderNote };
+      // await updateFolderAPI(folderId, newData);
+      // try {
+      //   const { data } = await getAllFoldersAPI();
+      //   dispatch(addFoldersToStore([...data].reverse()));
+      // } catch (error) {
+      //   console.error("Error", error);
+      // }
+      const currentFolder = folders.find((item) => item.id == folderId);
+      const newNote = currentFolder.notes.filter((item) => item.id != noteId);
+
+      const newFolder = {
+        ...currentFolder,
+        notes: [...newNote],
+      };
+
+      dispatch(updateFolderInFirebase({ id: folderId, folder: newFolder }));
+      dispatch(getAllFoldersFromFirebase());
+
       // note in the trash
     } else if (trash) {
       try {
@@ -292,5 +308,5 @@ Note.propTypes = {
   data: PropTypes.object,
   trash: PropTypes.bool,
   archive: PropTypes.bool,
-  folderId: PropTypes.number,
+  folderId: PropTypes.string,
 };
