@@ -1,22 +1,16 @@
 import { Note } from "../components/Note";
 import { TimeSort } from "../components/TimeSort";
-import { getAllTrashAPI } from "../services/allAPIs";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addTrashToStore } from "../redux/addTrashSlice";
+import { getNotesFromTrashFirebase } from "../redux/addTrashSlice";
 
 const Trash = () => {
   const { trashes } = useSelector((state) => state.trash);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getAllTrash();
+    dispatch(getNotesFromTrashFirebase());
   }, []);
-
-  const getAllTrash = async () => {
-    const { data } = await getAllTrashAPI();
-    dispatch(addTrashToStore(data));
-  };
 
   return (
     <div className=" container flex flex-col items-center lg:items-start px-2 py-4 mt-5">

@@ -23,6 +23,7 @@ import {
   uploadNoteAPI,
 } from "../services/allAPIs";
 import {
+  addNoteToFirebase,
   addNotesToStore,
   deleteNoteFromFirebase,
   fetchNotesFromFirebase,
@@ -34,7 +35,11 @@ import {
   getAllFoldersFromFirebase,
   updateFolderInFirebase,
 } from "../redux/addFolderSlice";
-import { addTrashToStore } from "../redux/addTrashSlice";
+import {
+  addNoteToTrashFirebase,
+  deleteNoteFromTrashFirebase,
+  getNotesFromTrashFirebase,
+} from "../redux/addTrashSlice";
 import PropTypes from "prop-types";
 
 export const Note = ({ data, trash, archive, folderId }) => {
@@ -80,15 +85,27 @@ export const Note = ({ data, trash, archive, folderId }) => {
 
       // note in the trash
     } else if (trash) {
-      try {
-        await removeFromTrashAPI(noteId);
-        const { data } = await getAllTrashAPI();
-        dispatch(addTrashToStore(data));
-      } catch (error) {
-        console.error("Deletion ", error);
-      }
+      dispatch(deleteNoteFromTrashFirebase(noteId));
+      dispatch(getNotesFromTrashFirebase());
+      // try {
+      //   await removeFromTrashAPI(noteId);
+      //   const { data } = await getAllTrashAPI();
+      //   dispatch(addTrashToStore(data));
+      // } catch (error) {
+      //   console.error("Deletion ", error);
+      // }
     } else {
       // delete note from firebase db 'notes'
+
+      const updatedNote = {
+        body: data.body,
+        date: data.date,
+        time: data.time,
+        day: data.day,
+        color: data.color,
+        archive: data.archive,
+      };
+      dispatch(addNoteToTrashFirebase(updatedNote));
       dispatch(deleteNoteFromFirebase(noteId));
       dispatch(fetchNotesFromFirebase());
       // try {
@@ -198,15 +215,26 @@ export const Note = ({ data, trash, archive, folderId }) => {
 
   // restoring note
   const handleRestoreNote = async (note) => {
-    handleDeleteNote(note?.id);
-    try {
-      await uploadNoteAPI({
-        ...note,
-        archive: false,
-      });
-    } catch (error) {
-      console.error("Restore Error: ", error);
-    }
+    // handleDeleteNote(note?.id);
+    // try {
+    //   await uploadNoteAPI({
+    //     ...note,
+    //     archive: false,
+    //   });
+    // } catch (error) {
+    //   console.error("Restore Error: ", error);
+    // }
+    const updatedNote = {
+      body: note.body,
+      date: note.date,
+      time: note.time,
+      day: note.day,
+      color: note.color,
+      archive: note.archive,
+    };
+    dispatch(addNoteToFirebase(updatedNote));
+    dispatch(deleteNoteFromTrashFirebase(note.id));
+    dispatch(getNotesFromTrashFirebase());
   };
 
   return (
