@@ -5,13 +5,13 @@ t-Notes is a simple note keeping application where user can manage and organize 
 ## Key Features
 
 - **Create, Edit, Delete:** Manage your notes and folders, ensuring a clutter-free and organized workspace.
--
+
 - **Filtering:** Quickly locate your notes and folders by filtering based on their creation time.
--
+
 - **Drag and Drop:** Effortlessly organize your thoughts by utilizing the drag-and-drop feature, making categorization a breeze.
--
+
 - **Revitalize with Trash:** Never worry about accidental deletions – recover deleted notes from the user-friendly Trash section.
--
+
 - **Archive for Future Reference:** Preserve important notes in the Archive.
 
 ## Technologies Used
