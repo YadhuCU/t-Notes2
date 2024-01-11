@@ -2,7 +2,6 @@
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { formattedDate } from "../utils/formatter";
-import { getAllFoldersAPI, getAllNoteAPI } from "../services/allAPIs";
 import {
   addFoldersToStore,
   getAllFoldersFromFirebase,
@@ -12,8 +11,8 @@ import { addNotesToStore, fetchNotesFromFirebase } from "../redux/addNoteSlice";
 export const TimeSort = ({ type }) => {
   const allList = useRef(null);
   const dispatch = useDispatch();
-  const { notes, notesClone } = useSelector((state) => state.note);
-  const { folders, foldersClone } = useSelector((state) => state.folder);
+  const { notesClone } = useSelector((state) => state.note);
+  const { foldersClone } = useSelector((state) => state.folder);
 
   const handlActive = async (e) => {
     Array.from(allList.current.children).forEach((item) => {
@@ -28,20 +27,16 @@ export const TimeSort = ({ type }) => {
 
     // Sort the contents
     if (type === "folder") {
-      // const { data } = await getAllFoldersAPI();
       if (foldersClone.length > 0 && selection == "Todays") {
-        // sort the folder datas
         const newData = foldersClone.filter((item) => item.date == currentDate);
-        // result
         dispatch(addFoldersToStore(newData));
       } else if (foldersClone.length > 0 && selection === "This Month") {
-        // sort the folder datas
         const newData = foldersClone.filter((item) => {
           const currMonth = currentDate.split("/")[0];
           const folderMonth = item.date.split("/")[0];
           return currMonth == folderMonth;
         });
-        // result
+
         dispatch(addFoldersToStore(newData));
       } else if (foldersClone.length > 0 && selection === "All") {
         dispatch(getAllFoldersFromFirebase());

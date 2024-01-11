@@ -1,22 +1,10 @@
 import { AddNote } from "./AddNote";
 import { Note } from "./Note";
 import { TimeSort } from "./TimeSort";
-import { getAllNoteAPI } from "../services/allAPIs";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addNotesToStore } from "../redux/addNoteSlice";
+import { useSelector } from "react-redux";
 
 export const Notes = () => {
   const { notes } = useSelector((state) => state.note);
-  const dispatch = useDispatch();
-
-  const getData = async () => {
-    const { data } = await getAllNoteAPI();
-    dispatch(addNotesToStore([...data].reverse()));
-  };
-  useEffect(() => {
-    // getData();
-  }, []);
 
   return (
     <div className=" container flex flex-col items-center lg:items-start px-2 py-4 mt-5">

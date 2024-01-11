@@ -3,7 +3,6 @@
 import { Note } from "../components/Note";
 import { TimeSort } from "../components/TimeSort";
 import { useEffect, useState } from "react";
-import { getSingleFolderAPI } from "../services/allAPIs";
 import { useSelector } from "react-redux";
 
 const CommonPage = ({ pageTitle, id }) => {

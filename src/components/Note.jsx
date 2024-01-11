@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -7,33 +7,14 @@ import { IoMdTimer } from "react-icons/io";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addToArchiveAPI,
-  addToTrashAPI,
-  deleteNoteAPI,
-  getAllArchiveAPI,
-  getAllFoldersAPI,
-  getAllNoteAPI,
-  getAllTrashAPI,
-  getSingleFolderAPI,
-  getSingleNoteAPI,
-  removeFromArchiveAPI,
-  removeFromTrashAPI,
-  updateFolderAPI,
-  updateNoteAPI,
-  uploadNoteAPI,
-} from "../services/allAPIs";
-import {
   addNoteToArchiveFirebase,
   addNoteToFirebase,
-  addNotesToStore,
   deleteNoteFromFirebase,
   fetchNotesFromFirebase,
   removeNoteFromArchiveFirebase,
 } from "../redux/addNoteSlice";
 import { AddNote } from "./AddNote";
-import { addArchivesToStore } from "../redux/addArchiveSlice";
 import {
-  addFoldersToStore,
   getAllFoldersFromFirebase,
   updateFolderInFirebase,
 } from "../redux/addFolderSlice";
@@ -46,8 +27,6 @@ import PropTypes from "prop-types";
 
 export const Note = ({ data, trash, archive, folderId }) => {
   const dispatch = useDispatch();
-  // const textAreaRef = useRef(null);
-  // const [height, setHeight] = useState(0);
   const { folders } = useSelector((state) => state.folder);
 
   // MUI thingssss
@@ -56,24 +35,9 @@ export const Note = ({ data, trash, archive, folderId }) => {
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  useEffect(() => {
-    // const scrollAreaHeight = textAreaRef.current.scrollHeight;
-    // setHeight(`${scrollAreaHeight}px`);
-  }, []);
-
   const handleDeleteNote = async (noteId) => {
     // note in the  folder
     if (folderId) {
-      // const { data } = await getSingleFolderAPI(folderId);
-      // const newFolderNote = data.notes.filter((item) => item.id != noteId);
-      // const newData = { ...data, notes: newFolderNote };
-      // await updateFolderAPI(folderId, newData);
-      // try {
-      //   const { data } = await getAllFoldersAPI();
-      //   dispatch(addFoldersToStore([...data].reverse()));
-      // } catch (error) {
-      //   console.error("Error", error);
-      // }
       const currentFolder = folders.find((item) => item.id == folderId);
       const newNote = currentFolder.notes.filter((itemId) => itemId != noteId);
 
@@ -89,13 +53,6 @@ export const Note = ({ data, trash, archive, folderId }) => {
     } else if (trash) {
       dispatch(deleteNoteFromTrashFirebase(noteId));
       dispatch(getNotesFromTrashFirebase());
-      // try {
-      //   await removeFromTrashAPI(noteId);
-      //   const { data } = await getAllTrashAPI();
-      //   dispatch(addTrashToStore(data));
-      // } catch (error) {
-      //   console.error("Deletion ", error);
-      // }
     } else {
       // delete note from firebase db 'notes'
 
@@ -110,30 +67,6 @@ export const Note = ({ data, trash, archive, folderId }) => {
       dispatch(addNoteToTrashFirebase(updatedNote));
       dispatch(deleteNoteFromFirebase(noteId));
       dispatch(fetchNotesFromFirebase());
-      // try {
-      //   const { data } = await getSingleNoteAPI(noteId);
-      //   await addToTrashAPI(data);
-      //   await deleteNoteAPI(noteId);
-      // } catch (error) {
-      //   console.error("Deletion API error: ", error);
-      // }
-      // // deleting the note also from the Archive
-      // //TODO: fetch allArchiveNote and check if it's there
-      // //TODO: if YES, make deletea archive api call
-      //
-      // //1.
-      // try {
-      //   const { data } = await getAllArchiveAPI();
-      //   const archiveNote = data.find((item) => item.id == noteId);
-      //   if (archiveNote) {
-      //     await removeFromArchiveAPI(noteId);
-      //   }
-      // } catch (error) {
-      //   console.error("Error : ", error);
-      // }
-      //
-      // const { data } = await getAllNoteAPI();
-      // dispatch(addNotesToStore([...data].reverse()));
     }
     handleClose();
   };
@@ -155,91 +88,10 @@ export const Note = ({ data, trash, archive, folderId }) => {
     }
 
     handleClose();
-
-    //TODO: what the fuck am i doing here, becaues i reduce the fucking code in below with above.
-    //
-    // if the note in Archive page
-    // if (archive) {
-    //   // remove from the archive and update the store
-    //   // remove from archive db
-    //   await removeFromArchiveAPI(note.id);
-    //   // change the value 'archive' in note db
-    //   const singleNote = await getSingleNoteAPI(note.id);
-    //
-    //   const newSinlgeNote = {
-    //     ...singleNote.data,
-    //     archive: false,
-    //   };
-    //   await updateNoteAPI(note.id, newSinlgeNote);
-    //
-    //   // updating the store of Archive
-    //   const { data } = await getAllArchiveAPI();
-    //   dispatch(addArchivesToStore([...data].reverse()));
-    // } else {
-    //   // in other pages
-    //   const { data } = await getAllArchiveAPI();
-    //   const isArchived = data.find((item) => item.id == note.id);
-    //   if (isArchived) {
-    //     await removeFromArchiveAPI(note.id);
-    //     // change the value 'archive' in note db
-    //     const singleNote = await getSingleNoteAPI(note.id);
-    //
-    //     const newSinlgeNote = {
-    //       ...singleNote.data,
-    //       archive: false,
-    //     };
-    //     await updateNoteAPI(note.id, newSinlgeNote);
-    //     // updating the store
-    //     try {
-    //       const { data } = await getAllNoteAPI();
-    //       dispatch(addNotesToStore([...data].reverse()));
-    //     } catch (error) {
-    //       console.error("Error: ", error);
-    //     }
-    //     try {
-    //       const { data } = await getAllArchiveAPI();
-    //       dispatch(addArchivesToStore([...data].reverse()));
-    //     } catch (error) {
-    //       console.error("Error: ", error);
-    //     }
-    //   } else {
-    //     // fetchinge singe note to update the 'archive' field
-    //     const singleNote = await getSingleNoteAPI(note.id);
-    //     const newSinlgeNote = {
-    //       ...singleNote.data,
-    //       archive: true,
-    //     };
-    //     await updateNoteAPI(note.id, newSinlgeNote);
-    //     // adding note to archive db
-    //     await addToArchiveAPI(newSinlgeNote);
-    //     // updating the store
-    //     try {
-    //       const { data } = await getAllNoteAPI();
-    //       dispatch(addNotesToStore([...data].reverse()));
-    //     } catch (error) {
-    //       console.error("Error: ", error);
-    //     }
-    //     try {
-    //       const { data } = await getAllArchiveAPI();
-    //       dispatch(addArchivesToStore([...data].reverse()));
-    //     } catch (error) {
-    //       console.error("Error: ", error);
-    //     }
-    //   }
-    // }
   };
 
   // restoring note
   const handleRestoreNote = async (note) => {
-    // handleDeleteNote(note?.id);
-    // try {
-    //   await uploadNoteAPI({
-    //     ...note,
-    //     archive: false,
-    //   });
-    // } catch (error) {
-    //   console.error("Restore Error: ", error);
-    // }
     const updatedNote = {
       body: note.body,
       date: note.date,
@@ -317,20 +169,6 @@ export const Note = ({ data, trash, archive, folderId }) => {
           </Menu>
         </div>
       </div>
-      {/* <h3 className="text-xl py-2 font-normal tracking-wider border-b border-slate-400 border-bottom"> */}
-      {/*   {data?.title} */}
-      {/* </h3> */}
-      {/* <textarea */}
-      {/*   // className="text-base leading-7 tracking-wider text-left  font-normal opacity-70" */}
-      {/*   // style={{ wordWrap: "break-word" }} */}
-      {/*   ref={textAreaRef} */}
-      {/*   className="note-textarea w-full text-base leading-7 font-normal opacity-70 bg-transparent border-none outline-none " */}
-      {/*   style={{ */}
-      {/*     height: height, */}
-      {/*   }} */}
-      {/*   readOnly */}
-      {/*   value={data?.body} */}
-      {/* /> */}
       <div
         dangerouslySetInnerHTML={{ __html: data?.body }}
         className="w-full opacity-70 bg-transparent"

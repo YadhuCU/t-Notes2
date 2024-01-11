@@ -93,28 +93,8 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
 
       dispatch(updateNoteInFirebase({ id: currentNote.id, updatedNote }));
       dispatch(fetchNotesFromFirebase());
-
-      // update the existing note in server.
-      // const updatedNote = {
-      //   ...currentNote,
-      //   body: value,
-      //   date,
-      //   time,
-      //   day,
-      //   color: color,
-      // };
-      //
-      // try {
-      //   response = await updateNoteAPI(currentNote.id, updatedNote);
-      // } catch (error) {
-      //   console.error("Updation Error: ", error);
-      // }
-      // const { data } = await getAllNoteAPI();
-      // dispatch(addNotesToStore([...data].reverse()));
-      // handlCloseEditMenu();
     } else {
       // create new note and upload it to the server
-      // uploading object
       const singleNoteData = {
         body: value,
         date,
@@ -125,17 +105,6 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
       };
       dispatch(addNoteToFirebase(singleNoteData));
       dispatch(fetchNotesFromFirebase());
-      // try {
-      //   response = await uploadNoteAPI(singleNoteData);
-      // } catch (error) {
-      //   console.error("Error: ", error);
-      // }
-      // if (response.status >= 200 && response.status <= 300) {
-      //   const { data } = await getAllNoteAPI();
-      //   dispatch(addNotesToStore([...data].reverse()));
-      // } else {
-      //   console.error("Error: ", response);
-      // }
     }
   };
 

@@ -1,34 +1,28 @@
 /* eslint-disable react/prop-types */
 import { IoMdAddCircle } from "react-icons/io";
 import { FaFolder } from "react-icons/fa";
-
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import "swiper/css";
-
-import Backdrop from "@mui/material/Backdrop";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Fade from "@mui/material/Fade";
-import Tooltip from "@mui/material/Tooltip";
-
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Backdrop,
+  Box,
+  Modal,
+  Fade,
+  Tooltip,
+} from "@mui/material";
 import { colors } from "../utils/colors";
 import { useState } from "react";
 import { formattedDate } from "../utils/formatter";
-import {
-  updateFolderAPI,
-  addFolderAPI,
-  getAllFoldersAPI,
-} from "../services/allAPIs";
 import { useDispatch } from "react-redux";
 import {
   addFolderToFirebase,
-  addFoldersToStore,
   getAllFoldersFromFirebase,
   updateFolderInFirebase,
 } from "../redux/addFolderSlice";
 import PropTypes from "prop-types";
+
+import "swiper/css";
 
 const style = {
   position: "absolute",
@@ -77,7 +71,6 @@ export const AddFolder = ({ entry, editFolder, handleCloseEditMenu }) => {
     if (!textInput) return;
     editFolder && handleCloseEditMenu();
     const date = formattedDate(new Date());
-    let response;
 
     if (editFolder) {
       // update the existing Folder
@@ -91,22 +84,8 @@ export const AddFolder = ({ entry, editFolder, handleCloseEditMenu }) => {
         updateFolderInFirebase({ id: editFolder.id, folder: newFolder }),
       );
       dispatch(getAllFoldersFromFirebase());
-
-      // try {
-      //   await updateFolderAPI(editFolder.id, newFolder);
-      // } catch (error) {
-      //   console.error("Folder Uploading Error: ", error);
-      // }
-      // if (response.status >= 200 && response.status < 300) {
-      //   // success (file creation)
-      //   const { data } = await getAllFoldersAPI();
-      //   dispatch(addFoldersToStore([...data].reverse()));
-      // } else {
-      //   // failed (file creation)
-      //   console.error("Stataus code error ", response.status);
-      // }
     } else {
-      // folder object
+      // create new folder
       const newFolder = {
         title: textInput,
         color,
@@ -115,19 +94,6 @@ export const AddFolder = ({ entry, editFolder, handleCloseEditMenu }) => {
       };
       dispatch(addFolderToFirebase(newFolder));
       dispatch(getAllFoldersFromFirebase());
-      // try {
-      //   response = await addFolderAPI(newFolder);
-      // } catch (error) {
-      //   console.error("Folder Uploading Error: ", error);
-      // }
-      // if (response.status >= 200 && response.status < 300) {
-      //   // success (file creation)
-      //   const { data } = await getAllFoldersAPI();
-      //   dispatch(addFoldersToStore([...data].reverse()));
-      // } else {
-      //   // failed (file creation)
-      //   console.error("Stataus code error ", response.status);
-      // }
     }
   };
 

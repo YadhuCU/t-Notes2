@@ -1,9 +1,7 @@
 import { Note } from "../components/Note";
 import { TimeSort } from "../components/TimeSort";
 import { useEffect } from "react";
-import { getAllArchiveAPI } from "../services/allAPIs";
 import { useSelector, useDispatch } from "react-redux";
-import { addArchivesToStore } from "../redux/addArchiveSlice";
 import { fetchNotesFromFirebase } from "../redux/addNoteSlice";
 
 const Archive = () => {

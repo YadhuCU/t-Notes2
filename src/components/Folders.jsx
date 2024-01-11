@@ -4,12 +4,8 @@ import { Folder } from "./Folder";
 import { TimeSort } from "./TimeSort";
 import { AddFolder } from "./AddFolder";
 import { useEffect } from "react";
-import { getAllFoldersAPI } from "../services/allAPIs";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  addFoldersToStore,
-  getAllFoldersFromFirebase,
-} from "../redux/addFolderSlice";
+import { getAllFoldersFromFirebase } from "../redux/addFolderSlice";
 
 export const Folders = () => {
   const { folders } = useSelector((state) => state.folder);
