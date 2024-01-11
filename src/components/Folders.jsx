@@ -15,18 +15,8 @@ export const Folders = () => {
   const { folders } = useSelector((state) => state.folder);
   const dispatch = useDispatch();
 
-  const getAllFolders = async () => {
-    try {
-      const { data } = await getAllFoldersAPI();
-      // dispatch(addFoldersToStore([...data].reverse()));
-      dispatch(getAllFoldersFromFirebase());
-    } catch (error) {
-      console.error("Error : ", error);
-    }
-  };
-
   useEffect(() => {
-    getAllFolders();
+    dispatch(getAllFoldersFromFirebase());
   }, []);
 
   return (

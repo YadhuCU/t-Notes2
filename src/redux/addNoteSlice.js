@@ -43,7 +43,6 @@ export const updateNoteInFirebase = createAsyncThunk(
     return await updateDoc(noteRef, updatedNote);
   },
 );
-
 export const addNoteToArchiveFirebase = createAsyncThunk(
   "addNote/addNoteToArchiveFirebase",
   async ({ id, note }) => {
@@ -59,7 +58,6 @@ export const addNoteToArchiveFirebase = createAsyncThunk(
     return await updateDoc(noteRef, newNote);
   },
 );
-
 export const removeNoteFromArchiveFirebase = createAsyncThunk(
   "addNote/removeNoteFromArchiveFirebase",
   async ({ id, note }) => {
@@ -78,12 +76,21 @@ export const removeNoteFromArchiveFirebase = createAsyncThunk(
 
 const addNoteSlice = createSlice({
   name: "addNote",
+
   initialState: {
     notes: [],
+    notesClone: [],
     archives: [],
     loading: false,
     error: "",
   },
+
+  reducers: {
+    addNotesToStore: (state, action) => {
+      state.notes = action.payload;
+    },
+  },
+
   extraReducers: (builder) => {
     // getting note from firebase
     builder.addCase(fetchNotesFromFirebase.pending, (state) => {
@@ -92,8 +99,8 @@ const addNoteSlice = createSlice({
     builder.addCase(fetchNotesFromFirebase.fulfilled, (state, action) => {
       state.loading = false;
       state.notes = action.payload;
+      state.notesClone = action.payload;
       const newArchives = action.payload.filter((item) => {
-        console.log("item.archive : ", item.archive);
         return item.archive;
       });
       state.archives = [...newArchives];

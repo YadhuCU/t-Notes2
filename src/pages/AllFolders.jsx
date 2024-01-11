@@ -8,7 +8,7 @@ const AllFolders = () => {
   return (
     <div className=" container px-2 py-4 mt-5 flex flex-col items-center lg:items-start">
       <h1 className="text-5xl">All Folders</h1>
-      <TimeSort />
+      <TimeSort type={"folder"} />
       <div className="my-10 gap-8 flex flex-wrap justify-center lg:justify-start">
         {folders?.map((item, index) => (
           <Folder key={index} folder={item} home={false} />

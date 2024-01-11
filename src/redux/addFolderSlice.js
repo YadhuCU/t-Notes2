@@ -56,6 +56,7 @@ const addFolderSlice = createSlice({
   name: "addFolder",
   initialState: {
     folders: [],
+    foldersClone: [],
     loading: false,
     error: "",
   },
@@ -71,6 +72,7 @@ const addFolderSlice = createSlice({
     builders.addCase(getAllFoldersFromFirebase.fulfilled, (state, action) => {
       state.loading = false;
       state.folders = action.payload;
+      state.foldersClone = action.payload;
     });
     builders.addCase(getAllFoldersFromFirebase.rejected, (state) => {
       state.loading = false;
