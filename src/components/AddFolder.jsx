@@ -103,9 +103,10 @@ export const AddFolder = ({ entry, editFolder, handleCloseEditMenu }) => {
         <div onClick={handleOpen}>{entry}</div>
       ) : (
         <IoMdAddCircle
+          title="add folder"
           onClick={handleOpen}
           style={{ fontSize: "2rem" }}
-          className="text-slate-400"
+          className="text-slate-400 cursor-pointer"
         />
       )}
       <Modal

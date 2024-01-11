@@ -120,9 +120,10 @@ export const AddNote = ({ currentNote, entry, handlCloseEditMenu }) => {
         <div onClick={handleOpen}>{entry}</div>
       ) : (
         <IoMdAddCircle
+          title="new note"
           onClick={handleOpen}
           style={{ fontSize: "2rem" }}
-          className="text-slate-400"
+          className="text-slate-400 cursor-pointer"
         />
       )}
       <Modal

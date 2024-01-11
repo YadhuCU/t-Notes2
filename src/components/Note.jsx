@@ -4,6 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { IoMdTimer } from "react-icons/io";
+import { TfiHandDrag } from "react-icons/tfi";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,6 +29,7 @@ import PropTypes from "prop-types";
 export const Note = ({ data, trash, archive, folderId }) => {
   const dispatch = useDispatch();
   const { folders } = useSelector((state) => state.folder);
+  const [drag, setDrag] = useState(true);
 
   // MUI thingssss
   const [anchorEl, setAnchorEl] = useState(null);
@@ -107,7 +109,7 @@ export const Note = ({ data, trash, archive, folderId }) => {
 
   return (
     <div
-      draggable
+      draggable={drag}
       onDragStart={(event) => handleDragStart(event, data || {})}
       style={{
         backgroundColor: data.color,
@@ -181,6 +183,15 @@ export const Note = ({ data, trash, archive, folderId }) => {
         <p className="font-bold text-xs ">
           {data?.time} {data?.day}
         </p>
+        <div
+          onClick={() => setDrag((prev) => !prev)}
+          title="draggable"
+          className={`ml-auto rounded-full p-2 cursor-pointer ${
+            drag || "opacity-30"
+          }`}
+        >
+          <TfiHandDrag />
+        </div>
       </div>
     </div>
   );
